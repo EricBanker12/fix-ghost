@@ -11,7 +11,8 @@ module.exports = function fixGhost(dispatch) {
 		myCC = [],
 		fakeSkill,
 		inFakeSkill = false,
-		newCCTime = 0
+		newCCTime = 0,
+		specialCCTimeout
 	
 	// get cid
 	dispatch.hook('S_LOGIN', 1, event => {
@@ -57,6 +58,16 @@ module.exports = function fixGhost(dispatch) {
 			if (event.setTargetAction != 0 && !event.source.equals(cid)) {
 				// prevent fake skills
 				specialCC = true
+				// get CC durations
+				let durations = []
+				for (let index in event.targetMovement) {
+					durations.push(event.targetMovement[index].duration)
+				}
+				// set CC timeout to max duration
+				specialCCTimeout = setTimeout(() => {
+					specialCC = false
+					if (debug) {console.log('specialCC', specialCC)}
+				}, Math.max.apply(null, durations))
 				if (debug) {console.log('specialCC', specialCC)}
 				// if in fake skill
 				if (debug) {console.log('inFakeSkill', inFakeSkill)}
@@ -171,6 +182,7 @@ module.exports = function fixGhost(dispatch) {
 			if (specialCC) {
 				// allow fake skills
 				specialCC = false
+				clearTimeout(specialCCTimeout)
 				if (debug) {console.log('specialCC', specialCC)}
 			}
 			//if (debug) {console.log('allow real skill end')}
@@ -181,5 +193,19 @@ module.exports = function fixGhost(dispatch) {
 	// detect fake action end
 	dispatch.hook('S_INSTANT_MOVE', 1, {order: 100, filter: {fake: true}}, event => {
 		if (debug) {console.log(Date.now(), 'S_INSTANT_MOVE')}
+	})
+	
+	// detect death
+	dispatch.hook('S_CREATURE_LIFE', 1, event => {
+		// if character is your character
+		if(event.target.equals(cid)) {
+			// if dead
+			if (!event.alive) {
+				// clear all CC
+				myCC = []
+				inFakeSkill = false
+				specialCC = false
+			}
+		}
 	})
 }
