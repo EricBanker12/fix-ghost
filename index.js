@@ -53,13 +53,6 @@ module.exports = function skillPredictionFix(dispatch) {
 				// prevent fake skills
 				specialCC = true
 				// set location
-				/*dispatch.toClient('S_INSTANT_MOVE', 1, {
-					id: cid,
-					x: event.x,
-					y: currentLocation.y,
-					z: currentLocation.z,
-					w: currentLocation.w
-				})*/
 				// S_EACH_SKILL_RESULT
 				// return false
 			}
