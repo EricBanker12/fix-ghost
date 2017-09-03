@@ -11,4 +11,4 @@ It has *not* been throughly tested yet, and use is *at your own risk*.
 ### Reported Issues
 * push back in Harrowhold P4 instantly teleports you to the wall without push-back animation.
 * spamming retaliate caused an immediate stand-up and allowed walking around client-side while knocked down server-side.
-* chain CC caused silence until knocked down (may be fixed now).
+* CC sometimes caused silence until knocked down (may be fixed now).
