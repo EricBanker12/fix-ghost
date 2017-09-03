@@ -95,6 +95,11 @@ module.exports = function fixGhost(dispatch) {
                     return true
                 }
             }
+            // if CC'd allow real skills
+            if (CC.includes(myCC[0]) || specialCC) {
+                if (debug) {console.log(Date.now(), 'CC - allow real skills')}
+                return true
+            } 
         }
     })
 
