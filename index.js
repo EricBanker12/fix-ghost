@@ -3,13 +3,14 @@ module.exports = function fixGhost(dispatch) {
     
     // constants
     const CC = require('./CC.js'),
-        debug = false // if (debug) {console.log('')}
+        debug = true // if (debug) {console.log('')}
     
     // variables
     let cid,
         specialCC = false,
         myCC = [],
         fakeSkill,
+        realSkill,
         inFakeSkill = false,
         newCCTime = 0,
         specialCCTimeout
@@ -156,6 +157,10 @@ module.exports = function fixGhost(dispatch) {
                     return true
                 }
             }
+            // if real action matches fake action
+            if (inFakeSkill && event.skill == fakeSkill.skill) {
+                realSkill = event
+            }
             // if CC'd allow real skills
             if (CC.includes(myCC[0]) || specialCC) {
                 if (debug) {console.log(Date.now(), 'CC - allow real skills')}
@@ -189,8 +194,22 @@ module.exports = function fixGhost(dispatch) {
             if (specialCC) {
                 // allow fake skills
                 specialCC = false
-                clearTimeout(specialCCTimeout)
+                if (specialCCTimeout) {clearTimeout(specialCCTimeout)}
                 if (debug) {console.log('specialCC', specialCC)}
+            }
+            // if debug
+            if (debug && inFakeSkill) {
+                console.log('event.skill', event.skill, 'realSkill.skill', realSkill.skill, 'fakeSkill.skill', fakeSkill.skill)
+                console.log('realSkill.stage', realSkill.stage, 'fakeSkill.stage', fakeSkill.stage)
+                console.log('event.id', event.id, 'realSkill.id', realSkill.id, 'fakeSkill.id', fakeSkill.id)
+            }
+            // if in fake skill, and server-side recieved it, and no new fake skill has started
+            if (inFakeSkill && realSkill && event.id == realSkill.id && realSkill.skill == fakeSkill.skill && realSkill.stage == fakeSkill.stage) {
+                // allow ending fake skill
+                inFakeSkill = false
+                if (debug) {console.log('inFakeSkill', inFakeSkill)}
+                event.id = fakeSkill.id
+                return true
             }
             // if CC'd allow real skill end
             if (CC.includes(myCC[0]) || specialCC) {
@@ -215,7 +234,7 @@ module.exports = function fixGhost(dispatch) {
                 myCC = []
                 inFakeSkill = false
                 specialCC = true
-                clearTimeout(specialCCTimeout)
+                if (specialCCTimeout) {clearTimeout(specialCCTimeout)}
             }
         }
     })
