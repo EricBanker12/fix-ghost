@@ -3,7 +3,7 @@ module.exports = function fixGhost(dispatch) {
     
     // constants
     const CC = require('./CC.js'),
-        debug = true // if (debug) {console.log('')}
+        debug = false // if (debug) {console.log('')}
     
     // variables
     let cid,
