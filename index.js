@@ -11,6 +11,7 @@ module.exports = function fixGhost(dispatch) {
         myCC = [],
         fakeSkill,
         realSkill,
+        specialCCSkill,
         inFakeSkill = false,
         newCCTime = 0,
         specialCCTimeout
@@ -59,6 +60,7 @@ module.exports = function fixGhost(dispatch) {
             if (event.setTargetAction != 0 && !event.source.equals(cid)) {
                 // prevent fake skills
                 specialCC = true
+                specialCCSkill = event
                 // get CC durations
                 let durations = []
                 for (let index in event.targetMovement) {
@@ -178,6 +180,15 @@ module.exports = function fixGhost(dispatch) {
             if (inFakeSkill && event.id == fakeSkill.id) {
                 inFakeSkill = false
                 if (debug) {console.log('inFakeSkill', inFakeSkill)}
+                return
+            }
+            // if knocked down/up and retaliate
+            if (specialCC && specialCCSkill && specialCCSkill.targetId == event.id) {
+                // allow fake skill
+                specialCC = false
+                if (specialCCTimeout) {clearTimeout(specialCCTimeout)}
+                if (debug) {console.log('specialCC', specialCC)}
+                return
             }
             else {
                 return false
