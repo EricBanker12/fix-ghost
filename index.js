@@ -244,7 +244,7 @@ module.exports = function fixGhost(dispatch) {
                 // clear all CC
                 myCC = []
                 inFakeSkill = false
-                specialCC = true
+                specialCC = false
                 if (specialCCTimeout) {clearTimeout(specialCCTimeout)}
             }
         }
