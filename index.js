@@ -25,7 +25,7 @@ module.exports = function fixGhost(dispatch) {
     dispatch.hook('S_ABNORMALITY_BEGIN', 2, {order: 100, filter: {fake: null}}, event => {
         // if character is your character
         if (event.target.equals(cid)) {
-            if (debug) {console.log(Date.now(), 'S_ABNORMALITY_BEGIN')}
+            if (debug) {console.log(Date.now(), 'S_ABNORMALITY_BEGIN', event.id)}
             // if debuff is CC
             if (CC.includes(event.id)) {
                 if (debug) {console.log('CC')}
@@ -41,7 +41,7 @@ module.exports = function fixGhost(dispatch) {
     dispatch.hook('S_ABNORMALITY_END', 1, {order: 100, filter: {fake: null}}, event => {
         // if character is your character
         if (event.target.equals(cid)) {
-            if (debug) {console.log(Date.now(), 'S_ABNORMALITY_END')}
+            if (debug) {console.log(Date.now(), 'S_ABNORMALITY_END', event.id)}
             // if debuff is CC
             if (CC.includes(event.id)) {
                 if (debug) {console.log('CC removed')}
@@ -241,6 +241,7 @@ module.exports = function fixGhost(dispatch) {
         if(event.target.equals(cid)) {
             // if dead
             if (!event.alive) {
+                if (debug) {console.log(Date.now(), 'You Died. CC cleared.')}
                 // clear all CC
                 myCC = []
                 inFakeSkill = false
