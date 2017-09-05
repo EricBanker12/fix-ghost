@@ -14,6 +14,7 @@ module.exports = function fixGhost(dispatch) {
         specialCCSkill,
         inFakeSkill = false,
         newCCTime = 0,
+        CCTimeout = {},
         specialCCTimeout
     
     // get cid
@@ -33,9 +34,20 @@ module.exports = function fixGhost(dispatch) {
                 myCC.push(event.id)
                 // set time of CC
                 newCCTime = Date.now()
+                // set CC timeout to duration
+                CCTimeout[event.id] = setTimeout(CCTimeoutHandler, event.duration, event)
             }
         }
     })
+    
+    // CCTimeoutHandler
+    function CCTimeoutHandler(event) {
+        // remove from list of active CC
+        if (myCC.includes(event.id)) {
+            if (debug) {console.log('CC removed')}
+            myCC.splice(myCC.indexOf(event.id), 1)
+        }
+    }
 
     // get abnormality end
     dispatch.hook('S_ABNORMALITY_END', 1, {order: 100, filter: {fake: null}}, event => {
@@ -44,9 +56,12 @@ module.exports = function fixGhost(dispatch) {
             if (debug) {console.log(Date.now(), 'S_ABNORMALITY_END', event.id)}
             // if debuff is CC
             if (CC.includes(event.id)) {
-                if (debug) {console.log('CC removed')}
                 // remove from list of active CC
-                myCC.splice(myCC.indexOf(event.id), 1)
+                if (myCC.includes(event.id)) {
+                    if (CCTimeout[event.id]) {clearTimeout(CCTimeout[event.id])}
+                    if (debug) {console.log('CC removed')}
+                    myCC.splice(myCC.indexOf(event.id), 1)
+                }
             }
         }
     })
