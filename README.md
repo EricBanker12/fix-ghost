@@ -1,3 +1,5 @@
+## This module is no longer maintained.
+I am no longer working on this module. Skill-Prediction has improved such that this module is obsolete, and the remaining issues from this module could only be fixed by editting skill-prediction directly.
 ## Fix Ghost ![Fix Ghost](https://cdn.discordapp.com/emojis/316459407129051138.png "Fix Ghost")
 Addon for Skill-Prediction. Tera-Proxy module for Tera Online. Blocks fake skills during crowd control.
 ### Warning
